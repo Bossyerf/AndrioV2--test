@@ -14,6 +14,9 @@ from typing import Dict, Any, List, Optional
 import psutil
 import logging
 
+# Import Blueprint creation tools
+from blueprint_creation_tools import BlueprintCreationTools
+
 logger = logging.getLogger(__name__)
 
 # ==================== CONFIGURATION ====================
@@ -24,6 +27,48 @@ def ensure_andrio_output_dir():
     if not os.path.exists(ANDRIO_OUTPUT_DIR):
         os.makedirs(ANDRIO_OUTPUT_DIR, exist_ok=True)
     return ANDRIO_OUTPUT_DIR
+
+# ==================== BLUEPRINT CREATION TOOLS ====================
+
+class BlueprintTools:
+    """Blueprint creation tools wrapper for AndrioV2"""
+    
+    def __init__(self):
+        self.blueprint_tools = BlueprintCreationTools()
+    
+    def create_blueprint_actor(self, blueprint_name: str, package_path: str = "/Game/", parent_class: str = "Actor") -> str:
+        """Create a basic Blueprint Actor"""
+        try:
+            result = self.blueprint_tools.create_blueprint_actor(blueprint_name, package_path, parent_class)
+            if result.get('success'):
+                return f"✅ Created Blueprint Actor: {blueprint_name}\n📁 Path: {package_path}\n🎯 Parent: {parent_class}"
+            else:
+                return f"❌ Failed to create Blueprint: {result.get('message', 'Unknown error')}"
+        except Exception as e:
+            return f"❌ Error creating Blueprint Actor: {str(e)}"
+    
+    def create_blueprint_with_mesh(self, blueprint_name: str, mesh_path: str = None, package_path: str = "/Game/") -> str:
+        """Create a Blueprint with a Static Mesh Component"""
+        try:
+            result = self.blueprint_tools.create_blueprint_with_mesh(blueprint_name, mesh_path, package_path)
+            if result.get('success'):
+                mesh_info = f"\n🎨 Mesh: {mesh_path}" if mesh_path else "\n🎨 Mesh: Default (none specified)"
+                return f"✅ Created Blueprint with Mesh: {blueprint_name}\n📁 Path: {package_path}{mesh_info}"
+            else:
+                return f"❌ Failed to create Blueprint with mesh: {result.get('message', 'Unknown error')}"
+        except Exception as e:
+            return f"❌ Error creating Blueprint with mesh: {str(e)}"
+    
+    def create_blueprint_from_template(self, blueprint_name: str, template_type: str = "Basic", package_path: str = "/Game/") -> str:
+        """Create a Blueprint from a template (Basic, Pawn, Character, GameMode, PlayerController, Widget)"""
+        try:
+            result = self.blueprint_tools.create_blueprint_from_template(blueprint_name, template_type, package_path)
+            if result.get('success'):
+                return f"✅ Created {template_type} Blueprint: {blueprint_name}\n📁 Path: {package_path}\n📋 Template: {template_type}"
+            else:
+                return f"❌ Failed to create Blueprint from template: {result.get('message', 'Unknown error')}"
+        except Exception as e:
+            return f"❌ Error creating Blueprint from template: {str(e)}"
 
 # ==================== FILE OPERATIONS TOOLS ====================
 
@@ -573,6 +618,7 @@ class AndrioToolbox:
         self.file_ops = FileOperationsTools()
         self.epic_launcher = EpicLauncherTools()
         self.unreal_engine = UnrealEngineTools()
+        self.blueprint_tools = BlueprintTools()
         
         # Create tools dictionary for easy access
         self.tools = self.get_all_tools()
@@ -600,13 +646,18 @@ class AndrioToolbox:
             "open_unreal_project": self.unreal_engine.open_unreal_project,
             "list_unreal_templates": self.unreal_engine.list_unreal_templates,
             "get_unreal_engine_info": self.unreal_engine.get_unreal_engine_info,
+            
+            # Blueprint Creation
+            "create_blueprint_actor": self.blueprint_tools.create_blueprint_actor,
+            "create_blueprint_with_mesh": self.blueprint_tools.create_blueprint_with_mesh,
+            "create_blueprint_from_template": self.blueprint_tools.create_blueprint_from_template,
         }
     
     def get_tools_summary(self) -> str:
         """Get a formatted summary of all available tools"""
         descriptions = self.get_tool_descriptions()
         
-        summary = ["🛠️ Available Tools (16 total):\n"]
+        summary = ["🛠️ Available Tools (19 total):\n"]
         
         # File Operations
         summary.append("📁 File Operations (8 tools):")
@@ -624,13 +675,22 @@ class AndrioToolbox:
         for tool in epic_tools:
             summary.append(f"  • {tool}: {descriptions[tool]}")
         
-        summary.append("\n🏗️ Unreal Engine (5 tools):")
+        summary.append("\n🏗️ Unreal Engine (4 tools):")
         ue_tools = [
             "create_unreal_project", "open_unreal_project", "list_unreal_templates", 
             "get_unreal_engine_info"
         ]
         for tool in ue_tools:
             summary.append(f"  • {tool}: {descriptions[tool]}")
+        
+        summary.append("\n🎨 Blueprint Creation (3 tools):")
+        blueprint_tools = [
+            "create_blueprint_actor", "create_blueprint_with_mesh", "create_blueprint_from_template"
+        ]
+        for tool in blueprint_tools:
+            summary.append(f"  • {tool}: {descriptions[tool]}")
+        
+        summary.append("\n💡 Usage: Call any tool by name, e.g., create_blueprint_actor('MyActor')")
         
         return "\n".join(summary)
     
@@ -652,4 +712,7 @@ class AndrioToolbox:
             "open_unreal_project": "Open an existing UE project",
             "list_unreal_templates": "List available UE project templates",
             "get_unreal_engine_info": "Get UE installation information",
+            "create_blueprint_actor": "Create a basic Blueprint Actor",
+            "create_blueprint_with_mesh": "Create a Blueprint with a Static Mesh Component",
+            "create_blueprint_from_template": "Create a Blueprint from a template",
         } 

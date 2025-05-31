@@ -24,3 +24,4 @@ psutil==5.9.8
 pywin32==308
 scikit-learn==1.6.0
 torch>=2.0.0
+upyrc>=1.0.0
