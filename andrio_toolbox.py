@@ -14,9 +14,6 @@ from typing import Dict, Any, List, Optional
 import psutil
 import logging
 
-# Import Blueprint creation tools
-from blueprint_creation_tools import BlueprintCreationTools
-
 logger = logging.getLogger(__name__)
 
 # ==================== CONFIGURATION ====================
@@ -28,47 +25,115 @@ def ensure_andrio_output_dir():
         os.makedirs(ANDRIO_OUTPUT_DIR, exist_ok=True)
     return ANDRIO_OUTPUT_DIR
 
-# ==================== BLUEPRINT CREATION TOOLS ====================
+# ==================== UE5 INTEGRATED CONSOLE TOOLS ====================
 
-class BlueprintTools:
-    """Blueprint creation tools wrapper for AndrioV2"""
+class UE5IntegratedTools:
+    """Basic UE5 tools for Andrio (simplified without remote execution)"""
     
     def __init__(self):
-        self.blueprint_tools = BlueprintCreationTools()
+        """Initialize UE5 integrated tools"""
+        pass
     
-    def create_blueprint_actor(self, blueprint_name: str, package_path: str = "/Game/", parent_class: str = "Actor") -> str:
-        """Create a basic Blueprint Actor"""
+    def enable_remote_execution(self) -> str:
+        """Provide instructions for enabling UE5 remote Python execution"""
         try:
-            result = self.blueprint_tools.create_blueprint_actor(blueprint_name, package_path, parent_class)
-            if result.get('success'):
-                return f"✅ Created Blueprint Actor: {blueprint_name}\n📁 Path: {package_path}\n🎯 Parent: {parent_class}"
-            else:
-                return f"❌ Failed to create Blueprint: {result.get('message', 'Unknown error')}"
+            logger.info("🔧 Providing UE5 remote Python execution setup instructions...")
+            
+            message = "✅ UE5 Remote Execution Setup Instructions:\n\n"
+            message += "📋 Manual Setup Steps:\n"
+            message += "1. Open your UE5 project\n"
+            message += "2. Go to Edit > Project Settings\n"
+            message += "3. Search for 'Python' in the settings\n"
+            message += "4. Enable 'Remote Execution' in Python Script Plugin settings\n"
+            message += "5. Set Multicast Group Endpoint to: 239.0.0.1:6766\n"
+            message += "6. Set Multicast Bind Address to: 0.0.0.0\n"
+            message += "\nAlternatively, run these console commands in UE5:\n"
+            message += "   py.RemoteExecution.Enable 1\n"
+            message += "   py.RemoteExecution.MulticastGroupEndpoint 239.0.0.1:6766\n"
+            message += "\n💡 Note: Remote execution will be implemented with a different method later."
+            
+            logger.info("✅ Remote execution setup instructions provided")
+            return message
+                
         except Exception as e:
-            return f"❌ Error creating Blueprint Actor: {str(e)}"
+            error_msg = f"❌ Error providing remote execution setup: {str(e)}"
+            logger.error(error_msg)
+            return error_msg
     
-    def create_blueprint_with_mesh(self, blueprint_name: str, mesh_path: str = None, package_path: str = "/Game/") -> str:
-        """Create a Blueprint with a Static Mesh Component"""
+    def check_remote_execution_status(self) -> str:
+        """Check basic UE5 project status"""
         try:
-            result = self.blueprint_tools.create_blueprint_with_mesh(blueprint_name, mesh_path, package_path)
-            if result.get('success'):
-                mesh_info = f"\n🎨 Mesh: {mesh_path}" if mesh_path else "\n🎨 Mesh: Default (none specified)"
-                return f"✅ Created Blueprint with Mesh: {blueprint_name}\n📁 Path: {package_path}{mesh_info}"
-            else:
-                return f"❌ Failed to create Blueprint with mesh: {result.get('message', 'Unknown error')}"
+            logger.info("🔍 Checking basic UE5 project status...")
+            
+            status_info = []
+            status_info.append("📋 Basic UE5 Project Status Check:")
+            
+            # Check if common UE project directories exist
+            common_project_paths = [
+                "D:/Andrios Output/UnrealProjects",
+                "D:/Andrios Output/UnrealProjects/blueprintexperiment"
+            ]
+            
+            for path in common_project_paths:
+                if os.path.exists(path):
+                    status_info.append(f"✅ Found: {path}")
+                    if os.path.isdir(path):
+                        try:
+                            items = len(os.listdir(path))
+                            status_info.append(f"   📁 Contains {items} items")
+                        except:
+                            status_info.append(f"   📁 Directory accessible")
+                else:
+                    status_info.append(f"❌ Not found: {path}")
+            
+            # Check for .uproject files
+            projects_dir = "D:/Andrios Output/UnrealProjects"
+            if os.path.exists(projects_dir):
+                uproject_files = []
+                for root, dirs, files in os.walk(projects_dir):
+                    for file in files:
+                        if file.endswith('.uproject'):
+                            uproject_files.append(os.path.join(root, file))
+                
+                if uproject_files:
+                    status_info.append(f"🎮 Found {len(uproject_files)} UE project(s):")
+                    for project in uproject_files[:3]:  # Show first 3
+                        status_info.append(f"   📄 {os.path.basename(project)}")
+                else:
+                    status_info.append("⚠️ No .uproject files found")
+            
+            status_info.append("\n💡 Remote execution will be implemented with a different method later.")
+            
+            return "\n".join(status_info)
+            
         except Exception as e:
-            return f"❌ Error creating Blueprint with mesh: {str(e)}"
+            error_msg = f"❌ Failed to check project status: {e}"
+            logger.error(error_msg)
+            return error_msg
     
-    def create_blueprint_from_template(self, blueprint_name: str, template_type: str = "Basic", package_path: str = "/Game/") -> str:
-        """Create a Blueprint from a template (Basic, Pawn, Character, GameMode, PlayerController, Widget)"""
-        try:
-            result = self.blueprint_tools.create_blueprint_from_template(blueprint_name, template_type, package_path)
-            if result.get('success'):
-                return f"✅ Created {template_type} Blueprint: {blueprint_name}\n📁 Path: {package_path}\n📋 Template: {template_type}"
-            else:
-                return f"❌ Failed to create Blueprint from template: {result.get('message', 'Unknown error')}"
-        except Exception as e:
-            return f"❌ Error creating Blueprint from template: {str(e)}"
+    def show_fps_stats(self) -> str:
+        """Show FPS statistics (placeholder)"""
+        return "📊 FPS Statistics: Remote execution not implemented yet. Use UE5 console command 'stat fps' manually."
+    
+    def dump_gpu_stats(self) -> str:
+        """Dump GPU statistics (placeholder)"""
+        return "📊 GPU Statistics: Remote execution not implemented yet. Use UE5 console command 'DumpGPU' manually."
+    
+    def list_loaded_assets(self) -> str:
+        """List loaded assets (placeholder)"""
+        return "📊 Loaded Assets: Remote execution not implemented yet. Use UE5 console command 'AssetManager.DumpLoadedAssets' manually."
+    
+    def toggle_wireframe(self) -> str:
+        """Toggle wireframe (placeholder)"""
+        return "🎨 Wireframe Mode: Remote execution not implemented yet. Use UE5 console command 'showflag.wireframe' manually."
+    
+    def memory_report(self) -> str:
+        """Memory report (placeholder)"""
+        return "💾 Memory Report: Remote execution not implemented yet. Use UE5 console command 'MemReport' manually."
+    
+    def get_all_actors_in_level(self) -> str:
+        """Get all actors (placeholder)"""
+        return "🎭 Level Actors: Remote execution not implemented yet. Use UE5 World Outliner or console commands manually."
 
 # ==================== FILE OPERATIONS TOOLS ====================
 
@@ -139,7 +204,7 @@ class FileOperationsTools:
             return "Drive listing is Windows-specific. Use list_files('/') for Unix systems."
 
     @staticmethod
-    def list_files(directory: str = ".") -> str:
+    def list_files(directory: str = "E:/UE_5.5") -> str:
         """List files and folders in a directory."""
         try:
             items = []
@@ -177,7 +242,7 @@ class FileOperationsTools:
             return f"Error writing file: {e}"
 
     @staticmethod
-    def find_files(pattern: str, directory: str = ".") -> str:
+    def find_files(pattern: str, directory: str = "E:/UE_5.5") -> str:
         """Find files matching a pattern (supports wildcards like *.txt, *.py)."""
         try:
             search_path = os.path.join(directory, pattern)
@@ -618,7 +683,7 @@ class AndrioToolbox:
         self.file_ops = FileOperationsTools()
         self.epic_launcher = EpicLauncherTools()
         self.unreal_engine = UnrealEngineTools()
-        self.blueprint_tools = BlueprintTools()
+        self.ue5_tools = UE5IntegratedTools()
         
         # Create tools dictionary for easy access
         self.tools = self.get_all_tools()
@@ -647,17 +712,20 @@ class AndrioToolbox:
             "list_unreal_templates": self.unreal_engine.list_unreal_templates,
             "get_unreal_engine_info": self.unreal_engine.get_unreal_engine_info,
             
-            # Blueprint Creation
-            "create_blueprint_actor": self.blueprint_tools.create_blueprint_actor,
-            "create_blueprint_with_mesh": self.blueprint_tools.create_blueprint_with_mesh,
-            "create_blueprint_from_template": self.blueprint_tools.create_blueprint_from_template,
+            # UE5 Console Commands (Integrated)
+            "show_fps_stats": self.ue5_tools.show_fps_stats,
+            "dump_gpu_stats": self.ue5_tools.dump_gpu_stats,
+            "list_loaded_assets": self.ue5_tools.list_loaded_assets,
+            "toggle_wireframe": self.ue5_tools.toggle_wireframe,
+            "memory_report": self.ue5_tools.memory_report,
+            "get_all_actors_in_level": self.ue5_tools.get_all_actors_in_level,
         }
     
     def get_tools_summary(self) -> str:
         """Get a formatted summary of all available tools"""
         descriptions = self.get_tool_descriptions()
         
-        summary = ["🛠️ Available Tools (19 total):\n"]
+        summary = ["Available Tools (21 total):\n"]
         
         # File Operations
         summary.append("📁 File Operations (8 tools):")
@@ -683,14 +751,16 @@ class AndrioToolbox:
         for tool in ue_tools:
             summary.append(f"  • {tool}: {descriptions[tool]}")
         
-        summary.append("\n🎨 Blueprint Creation (3 tools):")
-        blueprint_tools = [
-            "create_blueprint_actor", "create_blueprint_with_mesh", "create_blueprint_from_template"
+        summary.append("\n🎯 UE5 Console Commands (6 tools - placeholders):")
+        console_tools = [
+            "show_fps_stats", "dump_gpu_stats", "list_loaded_assets", 
+            "toggle_wireframe", "memory_report", "get_all_actors_in_level"
         ]
-        for tool in blueprint_tools:
+        for tool in console_tools:
             summary.append(f"  • {tool}: {descriptions[tool]}")
         
-        summary.append("\n💡 Usage: Call any tool by name, e.g., create_blueprint_actor('MyActor')")
+        summary.append("\n💡 Usage: Call any tool by name, e.g., create_unreal_project('MyProject')")
+        summary.append("💡 Note: UE5 console commands are placeholders - remote execution will be implemented later")
         
         return "\n".join(summary)
     
@@ -712,7 +782,10 @@ class AndrioToolbox:
             "open_unreal_project": "Open an existing UE project",
             "list_unreal_templates": "List available UE project templates",
             "get_unreal_engine_info": "Get UE installation information",
-            "create_blueprint_actor": "Create a basic Blueprint Actor",
-            "create_blueprint_with_mesh": "Create a Blueprint with a Static Mesh Component",
-            "create_blueprint_from_template": "Create a Blueprint from a template",
+            "show_fps_stats": "Show FPS statistics (placeholder - manual UE5 command)",
+            "dump_gpu_stats": "Dump GPU statistics (placeholder - manual UE5 command)",
+            "list_loaded_assets": "List loaded assets (placeholder - manual UE5 command)",
+            "toggle_wireframe": "Toggle wireframe mode (placeholder - manual UE5 command)",
+            "memory_report": "Generate memory report (placeholder - manual UE5 command)",
+            "get_all_actors_in_level": "Get level actors (placeholder - manual UE5 command)",
         } 
