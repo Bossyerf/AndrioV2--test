@@ -158,7 +158,7 @@ Learning Phase:
 
 ### **Time Format System**
 - **Standard 12-Hour Format**: Eliminated military time confusion
-- **Centralized Utilities**: core/time_utils.py for consistency
+- **Centralized Utilities**: andrio_toolbox.py for consistency
 - **Human-Readable**: MM/DD/YYYY dates, AM/PM indicators
 - **Duration Formatting**: "2h 15m" instead of seconds
 
@@ -218,16 +218,10 @@ Learning Phase:
 ### **Starting AndrioV2**
 ```bash
 # Autonomous Learning Mode (Recommended)
-python start_autonomous_learning.py
+python start_andrio.py
 
 # Interactive Chat Mode
-python AndrioV2.py
-
-# Model Switching
-python switch_model.py
-
-# Testing Systems
-python test_ue_control_and_errors.py
+python andrio_v2.py
 ```
 
 ### **Configuration Management**
@@ -363,4 +357,4 @@ python test_ue_control_and_errors.py
 
 **🎯 CONCLUSION**: AndrioV2 has a solid foundation with revolutionary potential. The key is completing UE source processing, connecting the RAG system, and implementing autonomous learning capabilities. Once achieved, this will be the world's most advanced AI development assistant.
 
-**🚀 The future of AI-assisted development starts with completing these next steps!** 
+**🚀 The future of AI-assisted development starts with completing these next steps!**

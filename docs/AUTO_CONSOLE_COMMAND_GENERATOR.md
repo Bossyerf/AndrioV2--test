@@ -212,10 +212,10 @@ def execute_ue5_console_command(command_name, parameters=None):
 ## 📁 **FILE STRUCTURE**
 ```
 /ConsoleHelp.html                    # Master command database
-/auto_generate_console_tools.py      # Auto-generator script
-/generated_console_tools.py          # Generated tools (example)
-/dangerous_commands.json             # Blacklisted commands
-/docs/AUTO_CONSOLE_COMMAND_GENERATOR.md  # This documentation
+auto_generate_console_tools.py      # Auto-generator script
+generated_console_tools.py          # Generated tools (example)
+dangerous_commands.json             # Blacklisted commands
+docs/AUTO_CONSOLE_COMMAND_GENERATOR.md  # This documentation
 ```
 
 ## 🚀 **NEXT STEPS**

@@ -49,28 +49,28 @@ UnrealEditor.exe "project.uproject"
 
 ### **Quick Start (Auto-Detect Existing Project)**
 ```bash
-python ue5_bootstrap_launcher.py --auto-detect
+python ue5_bootstrap_launcher.py (example) --auto-detect
 ```
 
 ### **Create New Project**
 ```bash
-python ue5_bootstrap_launcher.py --create MyGameProject
-python ue5_bootstrap_launcher.py --create MyGameProject --template ThirdPersonBP
+python ue5_bootstrap_launcher.py (example) --create MyGameProject
+python ue5_bootstrap_launcher.py (example) --create MyGameProject --template ThirdPersonBP
 ```
 
 ### **Use Specific Project**
 ```bash
-python ue5_bootstrap_launcher.py --project "D:/MyProject/MyProject.uproject"
+python ue5_bootstrap_launcher.py (example) --project "D:/MyProject/MyProject.uproject"
 ```
 
 ### **Full Demo Workflow**
 ```bash
-python demo_bootstrap_workflow.py
+python demo_bootstrap_workflow.py (example)
 ```
 
 ### **Test Connection (Without Andrio)**
 ```bash
-python test_remote_connection.py
+python test_remote_connection.py (example)
 ```
 
 ---
@@ -130,15 +130,15 @@ Bootstrap Script → UE5 Auto-Prepared → Andrio Auto-Connects
 **Multi-Instance Support:**
 ```bash
 # Launch multiple UE5 instances for different projects
-python ue5_bootstrap_launcher.py --create Project1 &
-python ue5_bootstrap_launcher.py --create Project2 &
-python ue5_bootstrap_launcher.py --create Project3 &
+python ue5_bootstrap_launcher.py (example) --create Project1 &
+python ue5_bootstrap_launcher.py (example) --create Project2 &
+python ue5_bootstrap_launcher.py (example) --create Project3 &
 ```
 
 **CI/CD Integration:**
 ```bash
 # Use in automated build pipelines
-python ue5_bootstrap_launcher.py --create BuildProject --template Blank
+python ue5_bootstrap_launcher.py (example) --create BuildProject --template Blank
 # ... run automated tests ...
 # ... package and deploy ...
 ```
@@ -146,7 +146,7 @@ python ue5_bootstrap_launcher.py --create BuildProject --template Blank
 **Team Development:**
 ```bash
 # Each developer can bootstrap their own environment
-python ue5_bootstrap_launcher.py --auto-detect
+python ue5_bootstrap_launcher.py (example) --auto-detect
 # Andrio connects to their specific setup
 ```
 
@@ -237,11 +237,7 @@ When bootstrap is successful, you'll see:
 
 ## 📁 **FILES INCLUDED**
 
-- `ue5_bootstrap_launcher.py` - Main bootstrap system
-- `demo_bootstrap_workflow.py` - Complete workflow demonstration
-- `test_remote_connection.py` - Connection verification test
-- `BOOTSTRAP_USAGE_GUIDE.md` - Detailed usage instructions
-
+These helper scripts were part of the original design but are not present in this repository.
 ---
 
 ## 🚀 **CONCLUSION**
@@ -255,3 +251,5 @@ The chicken-and-egg problem is completely solved - Andrio can now:
 - Control the entire development workflow
 
 **Ready for the next phase of Andrio development!** 🎯 
+
+
