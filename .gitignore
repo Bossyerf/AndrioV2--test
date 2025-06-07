@@ -1,0 +1,26 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+
+# Logs
+*.log
+andrio_v2.log
+
+# Virtual environments
+venv/
+ENV/
+.env/
+.venv/
+
+# Distribution / packaging
+build/
+dist/
+.eggs/
+*.egg-info/
+
+# Misc
+.DS_Store
+Thumbs.db
+
