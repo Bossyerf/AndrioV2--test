@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
 🚀 AndrioV2 Startup Script
-Simple launcher for the agentic Unreal Engine AI assistant
+Simple launcher for the agentic Unreal Engine AI assistant.
+
+Use ``--chat`` to start a lightweight chat interface that keeps context across
+turns and logs conversations for future learning.
 """
 
+import argparse
 import asyncio
 import sys
 import os
@@ -50,6 +54,14 @@ def check_ollama():
 
 def main():
     """Main startup function"""
+    parser = argparse.ArgumentParser(description="Launch AndrioV2")
+    parser.add_argument(
+        "--chat",
+        action="store_true",
+        help="Start the simple chat interface instead of the full agent",
+    )
+    args = parser.parse_args()
+
     print("🤖 AndrioV2 Startup")
     print("=" * 40)
     
@@ -94,15 +106,25 @@ def main():
     else:
         print("✅ UE installation path found")
     
-    # Launch AndrioV2
-    print("\n🚀 Launching AndrioV2...")
-    try:
-        from andrio_v2 import main as andrio_main
-        asyncio.run(andrio_main())
-    except KeyboardInterrupt:
-        print("\n👋 Goodbye!")
-    except Exception as e:
-        print(f"❌ Error launching AndrioV2: {e}")
+    # Launch chosen mode
+    if args.chat:
+        print("\n💬 Starting simple chat mode...")
+        try:
+            from simple_chat import chat_main
+            asyncio.run(chat_main())
+        except KeyboardInterrupt:
+            print("\n👋 Goodbye!")
+        except Exception as e:
+            print(f"❌ Error launching chat mode: {e}")
+    else:
+        print("\n🚀 Launching AndrioV2...")
+        try:
+            from andrio_v2 import main as andrio_main
+            asyncio.run(andrio_main())
+        except KeyboardInterrupt:
+            print("\n👋 Goodbye!")
+        except Exception as e:
+            print(f"❌ Error launching AndrioV2: {e}")
 
 if __name__ == "__main__":
     main()

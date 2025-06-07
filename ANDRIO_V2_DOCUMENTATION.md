@@ -342,6 +342,7 @@ AndrioV2/
 2. **Setup Ollama**: Install and configure Ollama with preferred models
 3. **Configure Paths**: Update UE installation and source paths
 4. **Run Startup**: Execute `python start_andrio.py`
+   - Add `--chat` to launch the minimal chat interface
 5. **Begin Learning**: Use `autonomous` command to start learning
 
 ### Troubleshooting
