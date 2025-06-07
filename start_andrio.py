@@ -8,6 +8,7 @@ import asyncio
 import sys
 import os
 from pathlib import Path
+from andrio_config import get_config
 
 def check_requirements():
     """Check if required dependencies are installed"""
@@ -75,9 +76,10 @@ def main():
     
     print("✅ Ollama connection OK")
     
-    # Check UE paths
-    ue_source_path = Path("D:\\UeSource-study")
-    ue_install_path = Path("E:\\UE_5.5")
+    # Check UE paths from configuration or environment
+    config = get_config()
+    ue_source_path = Path(config.get("UE_SOURCE_DIR", "")).expanduser()
+    ue_install_path = Path(config.get("UE_INSTALL_DIR", "")).expanduser()
     
     print("📁 Checking UE paths...")
     if not ue_source_path.exists():

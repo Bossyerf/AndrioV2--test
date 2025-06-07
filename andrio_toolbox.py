@@ -13,11 +13,14 @@ from pathlib import Path
 from typing import Dict, Any, List, Optional
 import psutil
 import logging
+from andrio_config import get_config
 
 logger = logging.getLogger(__name__)
 
 # ==================== CONFIGURATION ====================
-ANDRIO_OUTPUT_DIR = "D:\\Andrios Output"
+CONFIG = get_config()
+ANDRIO_OUTPUT_DIR = Path(CONFIG.get("ANDRIO_OUTPUT_DIR", "")).expanduser()
+DEFAULT_UE_INSTALL_DIR = Path(CONFIG.get("UE_INSTALL_DIR", "")).expanduser()
 
 def ensure_andrio_output_dir():
     """Ensure the Andrio output directory exists."""
@@ -70,8 +73,8 @@ class UE5IntegratedTools:
             
             # Check if common UE project directories exist
             common_project_paths = [
-                "D:/Andrios Output/UnrealProjects",
-                "D:/Andrios Output/UnrealProjects/blueprintexperiment"
+                os.path.join(ANDRIO_OUTPUT_DIR, "UnrealProjects"),
+                os.path.join(ANDRIO_OUTPUT_DIR, "UnrealProjects", "blueprintexperiment")
             ]
             
             for path in common_project_paths:
@@ -87,7 +90,7 @@ class UE5IntegratedTools:
                     status_info.append(f"❌ Not found: {path}")
             
             # Check for .uproject files
-            projects_dir = "D:/Andrios Output/UnrealProjects"
+            projects_dir = os.path.join(ANDRIO_OUTPUT_DIR, "UnrealProjects")
             if os.path.exists(projects_dir):
                 uproject_files = []
                 for root, dirs, files in os.walk(projects_dir):
@@ -204,7 +207,7 @@ class FileOperationsTools:
             return "Drive listing is Windows-specific. Use list_files('/') for Unix systems."
 
     @staticmethod
-    def list_files(directory: str = "E:/UE_5.5") -> str:
+    def list_files(directory: str = str(DEFAULT_UE_INSTALL_DIR)) -> str:
         """List files and folders in a directory."""
         try:
             items = []
@@ -242,7 +245,7 @@ class FileOperationsTools:
             return f"Error writing file: {e}"
 
     @staticmethod
-    def find_files(pattern: str, directory: str = "E:/UE_5.5") -> str:
+    def find_files(pattern: str, directory: str = str(DEFAULT_UE_INSTALL_DIR)) -> str:
         """Find files matching a pattern (supports wildcards like *.txt, *.py)."""
         try:
             search_path = os.path.join(directory, pattern)
@@ -413,12 +416,10 @@ class UnrealEngineTools:
     
     @staticmethod
     def get_ue_installations() -> List[str]:
-        """Get list of available UE installations."""
-        installations = [
-            "E:\\UE_5.6",
-            "E:\\UE_5.5"
-        ]
-        return [path for path in installations if os.path.exists(path)]
+        """Get list of available UE installations from configuration."""
+        ue_paths_str = CONFIG.get("UE_INSTALL_DIR", "")
+        paths = [p.strip() for p in ue_paths_str.split(os.pathsep) if p.strip()]
+        return [p for p in paths if os.path.exists(os.path.expanduser(p))]
 
     @staticmethod
     def create_unreal_project(project_name: str, template: str = "ThirdPersonBP", custom_path: str = None) -> str:
@@ -441,7 +442,7 @@ class UnrealEngineTools:
             # Find available UE installation
             ue_installations = UnrealEngineTools.get_ue_installations()
             if not ue_installations:
-                return "❌ No Unreal Engine installation found. Available paths checked: E:\\UE_5.6, E:\\UE_5.5"
+                return "❌ No Unreal Engine installation found. Check UE_INSTALL_DIR in config"
             
             ue_path = ue_installations[0]  # Use first available
             
@@ -582,7 +583,7 @@ class UnrealEngineTools:
             # Find available UE installation
             ue_installations = UnrealEngineTools.get_ue_installations()
             if not ue_installations:
-                return "❌ No Unreal Engine installation found"
+                return "❌ No Unreal Engine installation found. Check UE_INSTALL_DIR in config"
             
             editor_path = os.path.join(ue_installations[0], "Engine", "Binaries", "Win64", "UnrealEditor.exe")
             
@@ -622,7 +623,7 @@ class UnrealEngineTools:
         try:
             ue_installations = UnrealEngineTools.get_ue_installations()
             if not ue_installations:
-                return "❌ No Unreal Engine installation found"
+                return "❌ No Unreal Engine installation found. Check UE_INSTALL_DIR in config"
             
             templates_dir = os.path.join(ue_installations[0], "Templates")
             if not os.path.exists(templates_dir):
