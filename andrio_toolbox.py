@@ -31,11 +31,53 @@ def ensure_andrio_output_dir():
 # ==================== UE5 INTEGRATED CONSOLE TOOLS ====================
 
 class UE5IntegratedTools:
-    """Basic UE5 tools for Andrio (simplified without remote execution)"""
-    
+    """UE5 tools that communicate using the upyrc remote execution protocol."""
+
     def __init__(self):
-        """Initialize UE5 integrated tools"""
-        pass
+        self.config = get_config()
+        self.host = self.config.get("UE_REMOTE_HOST", "239.0.0.1")
+        self.port = int(self.config.get("UE_REMOTE_PORT", 6766))
+        self.connection = None
+
+    def connect(self) -> bool:
+        """Establish remote execution connection using upyrc."""
+        try:
+            from upyrc.upyre import PythonRemoteConnection, RemoteExecutionConfig
+
+            cfg = RemoteExecutionConfig(multicast_group=(self.host, self.port))
+            self.connection = PythonRemoteConnection(cfg)
+            self.connection.open_connection()
+            logger.info(f"✅ Connected to UE5 at {self.host}:{self.port}")
+            return True
+        except Exception as e:
+            logger.error(f"❌ Failed to connect to UE5: {e}")
+            self.connection = None
+            return False
+
+    def disconnect(self) -> None:
+        """Close the remote execution connection."""
+        if self.connection:
+            try:
+                self.connection.close_connection()
+            except Exception:
+                pass
+        self.connection = None
+
+    def is_connected(self) -> bool:
+        """Return True if remote execution is connected."""
+        return self.connection is not None
+
+    def execute_python(self, command: str) -> str:
+        """Execute a Python command on the connected UE5 instance."""
+        if not self.connection:
+            return "❌ Not connected to UE5 remote execution"
+
+        try:
+            result = self.connection.execute_python_command(command)
+            return result.output_str
+        except Exception as e:
+            logger.error(f"❌ Remote command failed: {e}")
+            return f"❌ Remote command failed: {e}"
     
     def enable_remote_execution(self) -> str:
         """Provide instructions for enabling UE5 remote Python execution"""
@@ -64,55 +106,16 @@ class UE5IntegratedTools:
             return error_msg
     
     def check_remote_execution_status(self) -> str:
-        """Check basic UE5 project status"""
+        """Return connection status information."""
+        if self.connection is None:
+            return "🔴 UE5 remote execution not connected"
+
         try:
-            logger.info("🔍 Checking basic UE5 project status...")
-            
-            status_info = []
-            status_info.append("📋 Basic UE5 Project Status Check:")
-            
-            # Check if common UE project directories exist
-            common_project_paths = [
-                os.path.join(ANDRIO_OUTPUT_DIR, "UnrealProjects"),
-                os.path.join(ANDRIO_OUTPUT_DIR, "UnrealProjects", "blueprintexperiment")
-            ]
-            
-            for path in common_project_paths:
-                if os.path.exists(path):
-                    status_info.append(f"✅ Found: {path}")
-                    if os.path.isdir(path):
-                        try:
-                            items = len(os.listdir(path))
-                            status_info.append(f"   📁 Contains {items} items")
-                        except:
-                            status_info.append(f"   📁 Directory accessible")
-                else:
-                    status_info.append(f"❌ Not found: {path}")
-            
-            # Check for .uproject files
-            projects_dir = os.path.join(ANDRIO_OUTPUT_DIR, "UnrealProjects")
-            if os.path.exists(projects_dir):
-                uproject_files = []
-                for root, dirs, files in os.walk(projects_dir):
-                    for file in files:
-                        if file.endswith('.uproject'):
-                            uproject_files.append(os.path.join(root, file))
-                
-                if uproject_files:
-                    status_info.append(f"🎮 Found {len(uproject_files)} UE project(s):")
-                    for project in uproject_files[:3]:  # Show first 3
-                        status_info.append(f"   📄 {os.path.basename(project)}")
-                else:
-                    status_info.append("⚠️ No .uproject files found")
-            
-            status_info.append("\n💡 Remote execution will be implemented with a different method later.")
-            
-            return "\n".join(status_info)
-            
+            self.connection.flush()
+            return "🟢 UE5 remote execution connected"
         except Exception as e:
-            error_msg = f"❌ Failed to check project status: {e}"
-            logger.error(error_msg)
-            return error_msg
+            logger.error(f"Remote execution check failed: {e}")
+            return f"🔴 Connection error: {e}"
     
     def show_fps_stats(self) -> str:
         """Show FPS statistics (placeholder)"""
@@ -701,6 +704,11 @@ class AndrioToolbox:
             "write_file": self.file_ops.write_file,
             "find_files": self.file_ops.find_files,
             "file_info": self.file_ops.file_info,
+
+            # Remote execution
+            "connect_remote_execution": self.ue5_tools.connect,
+            "disconnect_remote_execution": self.ue5_tools.disconnect,
+            "execute_remote_python": self.ue5_tools.execute_python,
             
             # Epic Launcher
             "launch_epic_games_launcher": self.epic_launcher.launch_epic_games_launcher,
@@ -726,7 +734,7 @@ class AndrioToolbox:
         """Get a formatted summary of all available tools"""
         descriptions = self.get_tool_descriptions()
         
-        summary = ["Available Tools (21 total):\n"]
+        summary = ["Available Tools (24 total):\n"]
         
         # File Operations
         summary.append("📁 File Operations (8 tools):")
@@ -752,9 +760,16 @@ class AndrioToolbox:
         for tool in ue_tools:
             summary.append(f"  • {tool}: {descriptions[tool]}")
         
+        summary.append("\n🔌 Remote Execution (3 tools):")
+        remote_tools = [
+            "connect_remote_execution", "disconnect_remote_execution", "execute_remote_python"
+        ]
+        for tool in remote_tools:
+            summary.append(f"  • {tool}: {descriptions[tool]}")
+
         summary.append("\n🎯 UE5 Console Commands (6 tools - placeholders):")
         console_tools = [
-            "show_fps_stats", "dump_gpu_stats", "list_loaded_assets", 
+            "show_fps_stats", "dump_gpu_stats", "list_loaded_assets",
             "toggle_wireframe", "memory_report", "get_all_actors_in_level"
         ]
         for tool in console_tools:
@@ -783,6 +798,9 @@ class AndrioToolbox:
             "open_unreal_project": "Open an existing UE project",
             "list_unreal_templates": "List available UE project templates",
             "get_unreal_engine_info": "Get UE installation information",
+            "connect_remote_execution": "Connect to UE5 via upyrc remote execution",
+            "disconnect_remote_execution": "Disconnect the remote UE5 session",
+            "execute_remote_python": "Execute arbitrary Python code in UE5",
             "show_fps_stats": "Show FPS statistics (placeholder - manual UE5 command)",
             "dump_gpu_stats": "Dump GPU statistics (placeholder - manual UE5 command)",
             "list_loaded_assets": "List loaded assets (placeholder - manual UE5 command)",

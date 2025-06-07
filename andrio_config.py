@@ -5,7 +5,10 @@ from pathlib import Path
 DEFAULT_CONFIG = {
     "UE_SOURCE_DIR": str(Path.home() / "UE_Source"),
     "UE_INSTALL_DIR": str(Path.home() / "UnrealEngine"),
-    "ANDRIO_OUTPUT_DIR": str(Path.home() / "AndrioOutput")
+    "ANDRIO_OUTPUT_DIR": str(Path.home() / "AndrioOutput"),
+    # Default remote execution connection details
+    "UE_REMOTE_HOST": "239.0.0.1",
+    "UE_REMOTE_PORT": 6766,
 }
 
 
