@@ -304,12 +304,21 @@ Always prioritize hands-on learning over theoretical study. Use tools to create 
         self.active_tasks = {}  # Track active tasks by ID
 
         # Initialize toolbox
+        self.ue_connected = False
         try:
             from andrio_toolbox import AndrioToolbox
             self.toolbox = AndrioToolbox()
             self.available_tools = self.toolbox.tools
             self.tool_descriptions = self.toolbox.get_tool_descriptions()
             logger.info(f"Available tools: {len(self.available_tools)}")
+            # Attempt UE5 remote connection
+            try:
+                self.ue_connected = self.toolbox.ue5_tools.connect()
+                if not self.ue_connected:
+                    logger.warning("UE5 remote execution connection failed")
+            except Exception as conn_err:
+                self.ue_connected = False
+                logger.error(f"UE5 connection error: {conn_err}")
         except Exception as e:
             logger.error(f"Failed to initialize toolbox: {e}")
             self.toolbox = None
@@ -5012,6 +5021,13 @@ async def main():
         andrio = AndrioV2(model_name=selected_model)
         print("✅ AndrioV2 initialized successfully!")
         logger.info("✅ ANDRIO V2 INITIALIZED SUCCESSFULLY")
+
+        if andrio.ue_connected:
+            print("🟢 Connected to UE5 remote execution")
+            logger.info("🟢 UE5 remote execution connection established")
+        else:
+            print("🔴 UE5 remote execution not available")
+            logger.warning("🔴 UE5 remote execution not available")
 
         # Show current status
         status = andrio.get_status()

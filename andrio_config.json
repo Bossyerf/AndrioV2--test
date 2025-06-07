@@ -2,4 +2,6 @@
   "UE_SOURCE_DIR": "~/UE_Source",
   "UE_INSTALL_DIR": "~/UnrealEngine",
   "ANDRIO_OUTPUT_DIR": "~/AndrioOutput"
+  ,"UE_REMOTE_HOST": "239.0.0.1"
+  ,"UE_REMOTE_PORT": 6766
 }
