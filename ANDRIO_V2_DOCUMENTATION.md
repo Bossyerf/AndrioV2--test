@@ -127,7 +127,7 @@ AndrioV2 progresses through 5 carefully designed learning phases:
 
 ---
 
-## 🛠️ Native Tool Suite (16 Tools)
+## 🛠️ Native Tool Suite (21 Tools)
 
 ### File Operations (8 Tools)
 1. **show_andrio_output**: Display Andrio's centralized output directory
@@ -144,12 +144,19 @@ AndrioV2 progresses through 5 carefully designed learning phases:
 10. **close_epic_games_launcher**: Close Epic Games Launcher
 11. **check_epic_launcher_status**: Check launcher status and processes
 
-### Unreal Engine Tools (5 Tools)
+### Unreal Engine Tools (4 Tools)
 12. **create_unreal_project**: Create new UE projects with templates
 13. **open_unreal_project**: Open existing UE projects
 14. **list_unreal_templates**: List available project templates
 15. **get_unreal_engine_info**: Get UE installation information
-16. **enable_remote_python_execution**: Setup UE5 remote execution
+
+### UE5 Console Commands (6 Tools - placeholders)
+16. **show_fps_stats**: Show FPS statistics (placeholder)
+17. **dump_gpu_stats**: Dump GPU statistics (placeholder)
+18. **list_loaded_assets**: List loaded assets (placeholder)
+19. **toggle_wireframe**: Toggle wireframe mode (placeholder)
+20. **memory_report**: Generate memory report (placeholder)
+21. **get_all_actors_in_level**: Get level actors (placeholder)
 
 ---
 
@@ -210,7 +217,7 @@ AndrioV2/
 ├── start_andrio.py           # Startup script with checks
 ├── requirements.txt          # Python dependencies
 ├── andrio_knowledge_db/      # ChromaDB persistent storage
-├── logs/                     # Comprehensive logging
+├── andrio_v2.log             # Application log file
 └── docs/                     # Documentation and guides
 ```
 
@@ -310,7 +317,6 @@ AndrioV2/
 ## 🚨 Current Issues & Limitations
 
 ### Known Issues
-- **Syntax Error**: Line 5016 in andrio_v2.py (orphaned except statement)
 - **Remote Execution**: UE5 remote Python execution not fully implemented
 - **GPU Memory**: Potential memory issues with large knowledge bases
 - **Tool Parameter Inference**: Some tools may need better parameter handling
